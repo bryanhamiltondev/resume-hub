@@ -113,5 +113,271 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
   </div>
 </div>
 <footer class="site-footer">ALSO BUILDING <a href="https://thedjcalendar.com/">THEDJCALENDAR.COM</a> &middot; BRYAN HAMILTON &middot; ROCHELLE PARK, NJ</footer>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<style>
+/* --- Animation setup --- */
+body { overflow-x: hidden; position: relative; }
+
+/* Entrance initial states */
+.js-fade-down { opacity: 0; transform: translateY(-20px); }
+.js-fade-up { opacity: 0; transform: translateY(40px); }
+.js-fade-left { opacity: 0; transform: translateX(-50px); }
+.js-fade-right { opacity: 0; transform: translateX(50px); }
+.js-scale-in { opacity: 0; transform: scale(0.7); }
+
+/* Particle canvas */
+#djc-particles {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+
+/* Keep content above particles */
+.site-header, .container, .site-footer { position: relative; z-index: 1; }
+
+/* Typewriter cursor blink */
+.typing::after {
+  content: '|';
+  animation: djc-blink 0.7s step-end infinite;
+  color: #00d2ff;
+  font-weight: 200;
+  margin-left: 2px;
+}
+@keyframes djc-blink { 50% { opacity: 0; } }
+
+/* Floating gradient orbs */
+.djc-orb {
+  position: fixed; border-radius: 50%; filter: blur(80px);
+  pointer-events: none; z-index: 0;
+  opacity: 0.15;
+}
+.djc-orb.cyan { background: #00d2ff; width: 400px; height: 400px; }
+.djc-orb.orange { background: #ff6b35; width: 350px; height: 350px; }
+
+/* Card 3D wrapper */
+.card { perspective: 1200px; }
+.card-inner { transform-style: preserve-3d; }
+
+/* Stat count glow */
+.stat-number.glow { color: #5ae5ff; text-shadow: 0 0 20px rgba(0,210,255,0.4); }
+
+/* Section label reveal line */
+.section-label { overflow: hidden; }
+.section-label .label-line {
+  display: inline-block; transform: translateY(100%);
+  transition: transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.section-label.reveal .label-line { transform: translateY(0); }
+
+/* Footer entrance */
+.site-footer { opacity: 0; transition: opacity 800ms ease; }
+</style>
+
+<script>
+$(function() {
+  'use strict';
+
+  /* ============================================================
+     ACT I : PARTICLE BACKGROUND
+     ============================================================ */
+  var $canvas = $('<canvas id="djc-particles">').appendTo('body');
+  var canvas = $canvas[0];
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var MAX_P = 70;
+
+  function resize() {
+    canvas.width = $(window).width();
+    canvas.height = $(document).height();
+  }
+  resize();
+  $(window).on('resize', resize);
+
+  function Particle() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.r = Math.random() * 2.2 + 0.4;
+    this.dx = (Math.random() - 0.5) * 0.35;
+    this.dy = (Math.random() - 0.5) * 0.35;
+    this.a = Math.random() * 0.45 + 0.08;
+  }
+  Particle.prototype.tick = function() {
+    this.x += this.dx; this.y += this.dy;
+    if (this.x < 0 || this.x > canvas.width) this.dx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.dy *= -1;
+  };
+  Particle.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0, 210, 255, ' + this.a + ')';
+    ctx.fill();
+  };
+
+  for (var i = 0; i < MAX_P; i++) particles.push(new Particle());
+
+  (function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    $.each(particles, function() { this.tick(); this.draw(); });
+    // Draw connections between nearby particles
+    for (var i = 0; i < particles.length; i++) {
+      for (var j = i + 1; j < particles.length; j++) {
+        var dx = particles[i].x - particles[j].x;
+        var dy = particles[i].y - particles[j].y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 130) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(0, 210, 255, ' + (0.06 * (1 - dist / 130)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  /* ============================================================
+     ACT II : FLOATING GRADIENT ORBS
+     ============================================================ */
+  var $orbCyan = $('<div class="djc-orb cyan">').appendTo('body');
+  var $orbOrange = $('<div class="djc-orb orange">').appendTo('body');
+  var orbPhase = 0;
+
+  setInterval(function() {
+    orbPhase += 0.008;
+    $orbCyan.css({
+      top: 15 + Math.sin(orbPhase) * 10 + '%',
+      left: 10 + Math.cos(orbPhase * 0.7) * 15 + '%'
+    });
+    $orbOrange.css({
+      top: 60 + Math.sin(orbPhase * 1.3 + 2) * 12 + '%',
+      left: 70 + Math.cos(orbPhase * 0.9 + 1) * 18 + '%'
+    });
+  }, 50);
+
+  /* ============================================================
+     ACT III : ELEMENT WIRING
+     ============================================================ */
+  var $tagline  = $('.site-header .tagline').addClass('js-fade-down');
+  var $heading  = $('.site-header h1');
+  var $bio      = $('.bio').addClass('js-fade-up');
+  var $ctaWrap  = $('.cta-buttons');
+  var $label    = $('.section-label').wrapInner('<span class="label-line">');
+  var $cards    = $('.card').addClass('js-fade-up');
+  var $statNums = $('.stat-number').addClass('js-scale-in');
+  var $contact  = $('.contact-section').addClass('js-fade-up');
+  var $footer   = $('.site-footer');
+
+  /* ============================================================
+     ACT IV : TYPEWRITER ON HEADING
+     ============================================================ */
+  var fullText = $heading.text();
+  $heading.empty().addClass('typing');
+  var idx = 0;
+  var typeTimer = setInterval(function() {
+    $heading.text(fullText.slice(0, idx + 1));
+    idx++;
+    if (idx >= fullText.length) {
+      clearInterval(typeTimer);
+      $heading.removeClass('typing');
+    }
+  }, 38);
+
+  /* ============================================================
+     ACT V : STAGGERED ENTRANCE CHAIN
+     ============================================================ */
+  var ease = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+  function fadeIn($el, css, delay, dur) {
+    setTimeout(function() {
+      $el.css($.extend({ transition: 'all ' + dur + 'ms ' + ease }, css));
+    }, delay);
+  }
+
+  // Tagline slides down
+  fadeIn($tagline, { opacity: 1, transform: 'translateY(0)' }, 300, 600);
+
+  // Bio fades up
+  fadeIn($bio, { opacity: 1, transform: 'translateY(0)' }, 800, 700);
+
+  // CTA buttons - staggered left/right
+  $ctaWrap.css('opacity', 1);
+  fadeIn($('.cta-btn.tech'), { opacity: 1, transform: 'translateY(0)' }, 1300, 500);
+  fadeIn($('.cta-btn.retail'), { opacity: 1, transform: 'translateY(0)' }, 1450, 500);
+
+  // Section label - slide-up reveal
+  fadeIn($label, {}, 1800, 0);
+  setTimeout(function() { $label.addClass('reveal'); }, 1800);
+
+  // Cards - staggered
+  setTimeout(function() {
+    $cards.each(function(i) {
+      setTimeout(function() {
+        $(this).css({ opacity: 1, transform: 'translateY(0)', transition: 'all 600ms ' + ease });
+      }.bind(this), i * 180);
+    });
+  }, 2100);
+
+  // Stats - count up
+  setTimeout(function() {
+    $statNums.each(function() {
+      var $s = $(this);
+      var raw = $s.text();
+      $s.css({ opacity: 1, transform: 'scale(1)', transition: 'all 500ms ' + ease });
+
+      var num = parseInt(raw, 10);
+      if (!isNaN(num) && String(num) === raw) {
+        var target = num;
+        $s.text('0').addClass('glow');
+        var current = 0;
+        var step = Math.max(1, Math.floor(target / 35));
+        var ci = setInterval(function() {
+          current += step;
+          if (current >= target) { current = target; clearInterval(ci); $s.removeClass('glow'); }
+          $s.text(current);
+        }, 30);
+      }
+    });
+  }, 2700);
+
+  // Contact section
+  fadeIn($contact, { opacity: 1, transform: 'translateY(0)' }, 3200, 700);
+
+  // Footer
+  fadeIn($footer, { opacity: 1 }, 3600, 800);
+
+  /* ============================================================
+     ACT VI : 3D CARD TILT
+     ============================================================ */
+  $('.card').on('mousemove', function(e) {
+    var r = this.getBoundingClientRect();
+    var x = (e.clientX - r.left) / r.width;
+    var y = (e.clientY - r.top) / r.height;
+    var rotX = (y - 0.5) * -12;
+    var rotY = (x - 0.5) * 12;
+    $(this).css('transform',
+      'perspective(1000px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale3d(1.03,1.03,1.03)');
+  }).on('mouseleave', function() {
+    $(this).css('transform', 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)');
+  });
+
+  /* ============================================================
+     ACT VII : CTA PULSE
+     ============================================================ */
+  (function pulse() {
+    $('.cta-btn.tech').delay(3000).animate({ boxShadow: '0 0 28px rgba(0,210,255,0.45)' }, 900)
+      .animate({ boxShadow: '0 0 8px rgba(0,210,255,0.12)' }, 900, pulse);
+  })();
+
+  /* ============================================================
+     ACT VIII : SMOOTH SCROLL (anchor CTAs)
+     ============================================================ */
+  $('.cta-btn[href^="#"]').on('click', function(e) {
+    e.preventDefault();
+    $('html, body').animate({ scrollTop: $($(this).attr('href')).offset().top - 30 }, 900, 'swing');
+  });
+});
+</script>
 </body>
 </html>
