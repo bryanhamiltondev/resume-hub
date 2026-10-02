@@ -27,6 +27,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 .site-header{text-align:center;padding:60px 0 20px}
 .site-header .tagline{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8b949e;margin-bottom:8px}
 .site-header h1{font-size:28px;font-weight:800;background:linear-gradient(90deg,#00d2ff,#ff6b35,#00d2ff);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px}
+.headshot-wrap{text-align:center;margin-bottom:20px}
+.headshot{width:105px;height:105px;border-radius:50%;border:2.5px solid #00d2ff;object-fit:cover;display:inline-block;box-shadow:0 0 20px rgba(0,210,255,.15)}
 .bio{text-align:center;max-width:680px;margin:0 auto 32px;font-size:15px;color:#c9d1d9;line-height:1.7}
 .bio strong{color:#f0f6fc}
 .cta-buttons{display:flex;gap:16px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
@@ -71,6 +73,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 </head>
 <body>
 <header class="site-header">
+  <div class="headshot-wrap">
+    <img src="https://www.thedjcalendar.com/_img/bryan-hamilton.jpg" alt="Bryan Hamilton" class="headshot">
+  </div>
   <p class="tagline">BRYAN HAMILTON &middot; ROCHELLE PARK, NJ</p>
   <h1>Same guy. Two ways to hire him.</h1>
 </header>
@@ -125,6 +130,9 @@ body { overflow-x: hidden; position: relative; }
 .js-fade-left { opacity: 0; transform: translateX(-50px); }
 .js-fade-right { opacity: 0; transform: translateX(50px); }
 .js-scale-in { opacity: 0; transform: scale(0.7); }
+
+/* Headshot entrance */
+.headshot-wrap { opacity: 0; transform: scale(0.5); }
 
 /* Particle canvas */
 #djc-particles {
@@ -259,6 +267,7 @@ $(function() {
   /* ============================================================
      ACT III : ELEMENT WIRING
      ============================================================ */
+  var $headshot = $('.headshot-wrap').addClass('js-scale-in');
   var $tagline  = $('.site-header .tagline').addClass('js-fade-down');
   var $heading  = $('.site-header h1');
   var $bio      = $('.bio').addClass('js-fade-up');
@@ -295,20 +304,23 @@ $(function() {
     }, delay);
   }
 
+  // Headshot scales in first
+  fadeIn($headshot, { opacity: 1, transform: 'scale(1)' }, 100, 700);
+
   // Tagline slides down
-  fadeIn($tagline, { opacity: 1, transform: 'translateY(0)' }, 300, 600);
+  fadeIn($tagline, { opacity: 1, transform: 'translateY(0)' }, 500, 600);
 
   // Bio fades up
-  fadeIn($bio, { opacity: 1, transform: 'translateY(0)' }, 800, 700);
+  fadeIn($bio, { opacity: 1, transform: 'translateY(0)' }, 900, 700);
 
   // CTA buttons - staggered left/right
   $ctaWrap.css('opacity', 1);
-  fadeIn($('.cta-btn.tech'), { opacity: 1, transform: 'translateY(0)' }, 1300, 500);
-  fadeIn($('.cta-btn.retail'), { opacity: 1, transform: 'translateY(0)' }, 1450, 500);
+  fadeIn($('.cta-btn.tech'), { opacity: 1, transform: 'translateY(0)' }, 1400, 500);
+  fadeIn($('.cta-btn.retail'), { opacity: 1, transform: 'translateY(0)' }, 1550, 500);
 
   // Section label - slide-up reveal
-  fadeIn($label, {}, 1800, 0);
-  setTimeout(function() { $label.addClass('reveal'); }, 1800);
+  fadeIn($label, {}, 1900, 0);
+  setTimeout(function() { $label.addClass('reveal'); }, 1900);
 
   // Cards - staggered
   setTimeout(function() {
@@ -317,7 +329,7 @@ $(function() {
         $(this).css({ opacity: 1, transform: 'translateY(0)', transition: 'all 600ms ' + ease });
       }.bind(this), i * 180);
     });
-  }, 2100);
+  }, 2200);
 
   // Stats - count up
   setTimeout(function() {
@@ -339,13 +351,13 @@ $(function() {
         }, 30);
       }
     });
-  }, 2700);
+  }, 2800);
 
   // Contact section
-  fadeIn($contact, { opacity: 1, transform: 'translateY(0)' }, 3200, 700);
+  fadeIn($contact, { opacity: 1, transform: 'translateY(0)' }, 3300, 700);
 
   // Footer
-  fadeIn($footer, { opacity: 1 }, 3600, 800);
+  fadeIn($footer, { opacity: 1 }, 3700, 800);
 
   /* ============================================================
      ACT VI : 3D CARD TILT
