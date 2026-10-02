@@ -20,7 +20,7 @@ Same person. Two completely different resumes. One page that lets you self-selec
 | File | Purpose |
 |------|---------|
 | `index.html` | The full landing page — markup, styles, and the 8-act jQuery animation suite all in one file |
-| `bryan-hamilton.jpg` | Headshot (you'll need to add this — currently served from the live server) |
+| `bryan-hamilton.jpg` | Headshot (currently served from the live server) |
 | `bryan-hamilton.vcf` | vCard for one-tap contact saving (currently served from the live server) |
 
 ---
