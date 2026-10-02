@@ -1,0 +1,17 @@
+BEGIN:VCARD
+VERSION:3.0
+PRODID:-//Bryan Hamilton//resume-hub//EN
+N:Hamilton;Bryan;;;
+FN:Bryan Hamilton
+NICKNAME:Bryan
+PHOTO;VALUE=URL;TYPE=JPEG:https://bryanhamilton.info/bryan-hamilton.jpg
+ADR;TYPE=HOME:;;29 Harvey Avenue;Rochelle Park;NJ;07662;USA
+TEL;TYPE=CELL;TYPE=VOICE:(201) 406-3595
+EMAIL;TYPE=INTERNET;TYPE=PREF:bryan_hamilton@me.com
+URL;TYPE=HOME:https://bryanhamilton.info
+URL;TYPE=WORK:https://thedjcalendar.com
+URL;TYPE=GITHUB:https://github.com/bryanhamiltondev
+URL;TYPE=LINKEDIN:https://www.linkedin.com/in/bryanhamilton-nj
+NOTE:PHP & vanilla JS engineer. Founder of The DJ Calendar.\nSame guy. Two ways to hire him.
+REV:2026-10-02T10:30:00Z
+END:VCARD
